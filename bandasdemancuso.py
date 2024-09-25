@@ -40,9 +40,14 @@ def fetch_data(ticker, start, end):
 
 # Fetch selected ticker data
 prices = fetch_data(ticker_input, start_date, end_date)
+
+# Verify the data is fetched properly
 if prices.empty:
     st.error("No data available for the selected ticker or ratio.")
 else:
+    st.write("Datos del ticker/ratio:")
+    st.dataframe(prices.head())  # Display the first few rows for debugging
+
     df = pd.DataFrame(prices, columns=['Close'])
 
     # Calculate the upper, lower, and middle bands
@@ -67,6 +72,10 @@ else:
 
     # Apply the band calculation
     df = calculate_bands(df)
+
+    # Check the calculations for bands
+    st.write("Datos con bandas calculadas:")
+    st.dataframe(df[['Close', 'Upper Band', 'Lower Band', 'Middle Band']].head())  # Display calculated bands
 
     # Check for NaN values and drop them for clean plotting
     df.dropna(inplace=True)
