@@ -55,7 +55,7 @@ else:
         df['Min 10D'] = df['Close'].rolling(window=10).min()
         df['Max 10D'] = df['Close'].rolling(window=10).max()
 
-        # Ranges over the last 3 days
+        # Calculate the range for each day
         df['Range'] = df['Close'].rolling(window=1).max() - df['Close'].rolling(window=1).min()
         avg_range_last_3_days = df['Range'].rolling(window=3).mean()
 
@@ -73,12 +73,16 @@ else:
     # Apply the band calculation
     df = calculate_bands(df)
 
-    # Check the calculations for bands
-    st.write("Datos con bandas calculadas:")
-    st.dataframe(df[['Close', 'Upper Band', 'Lower Band', 'Middle Band']].head())  # Display calculated bands
+    # Debugging: Check for NaN values after calculation
+    st.write("Datos con bandas calculadas (con posibles NaNs):")
+    st.dataframe(df[['Close', 'Upper Band', 'Lower Band', 'Middle Band']].head(15))  # Display first few rows
 
-    # Check for NaN values and drop them for clean plotting
-    df.dropna(inplace=True)
+    # Optional: Fill NaNs if needed (or you can drop them after verification)
+    df.fillna(method='bfill', inplace=True)  # Alternatively, you could use 'ffill' or drop NaNs
+
+    # After handling NaN values, display the cleaned data
+    st.write("Datos con bandas (sin NaNs):")
+    st.dataframe(df[['Close', 'Upper Band', 'Lower Band', 'Middle Band']].head(15))
 
     # Plotting the data
     fig = go.Figure()
